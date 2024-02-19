@@ -25,26 +25,24 @@ from rest_framework.decorators import api_view,permission_classes
 from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.permissions import IsAuthenticated,AllowAny
 
-from customers.utilis import convert_phone
-from payments.models import MpesaPayment, PushedSTKs
-from payments.serializer import MpesaSerialiser
+# from members.utilis import convert_phone
+from lipanampesa.models import MpesaPayment, PushedSTKs
+from lipanampesa.serializers import MpesaSerializer
+
 
 class PushMpesaSTK(APIView):
     permission_classes = [AllowAny,]
+
     def post(self, request):
-        data=request.data
-        email=data["email"]
-        if (email==''):
-             email="dagizo@gmail.com"
-        stk_payload={
-        'amount': data['amount'],
-        'currency': data['currency'],
-        'callback_url': data['callback_url'],
-        'channel': data['channel'],
-        'msisdn': convert_phone(data['msisdn']),
-        'phone': convert_phone(data['phone']),
-        'email': email
-         }
+        data = request.data
+        email = data.get("email", "dagizo@gmail.com")
+        stk_payload = {
+            'amount': data['amount'],
+            'currency': data['currency'],
+            'callback_url': data['callback_url'],
+            'channel': data['channel'],
+            'email': email
+        }
         print(stk_payload)
         url = "https://dev.chedah.io/api/login"
         payload={'email': 'dagizo@gmail.com',
@@ -101,16 +99,11 @@ class PushMpesaSTK(APIView):
 
 class MpesaCallBack(APIView):
     permission_classes = [AllowAny,]
-    def get(self, request):
-            data=request.data
-            obj=MpesaPayment.objects.all().order_by('-created')
-            ser=MpesaSerialiser(obj,many=True)
-            res={
-                 "status":True,
-                 "data":ser.data
-            }
 
-            return Response(res)
+    def get(self, request):
+        obj = MpesaPayment.objects.all().order_by('-created')
+        serializer = MpesaSerializer(obj, many=True)
+        return Response({"status": True, "data": serializer.data})
    
 
     def post(self, request):

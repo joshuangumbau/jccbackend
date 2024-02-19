@@ -1,5 +1,9 @@
 from django.contrib import admin
 
-# Register your models here.
+from lipanampesa.models import MpesaPayment
 
-# admin.site.register(lipanampesa)
+
+class MpesaPaymentAdmin(admin.ModelAdmin):
+    list_display = ('id', 'amount', 'email', 'date')
+
+admin.site.register(MpesaPayment, MpesaPaymentAdmin)
