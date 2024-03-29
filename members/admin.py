@@ -1,3 +1,10 @@
+
 from django.contrib import admin
 
-# Register your models here.
+from members.models import MemberDetails
+
+
+class MemberDetailsAdmin(admin.ModelAdmin):
+    list_display = ('id', 'phone_number')
+
+admin.site.register(MemberDetails, MemberDetailsAdmin)

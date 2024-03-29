@@ -29,24 +29,4 @@ class MpesaPayment(models.Model):
 
     def __str__(self):
         return self.receipt_code if self.receipt_code else ''
-    
-from django.db import models
-import uuid
-
-class PushedSTKs(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4)
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
-    channel = models.CharField(max_length=100)
-    reference = models.CharField(max_length=100)
-    mechant_app_id = models.CharField(max_length=100)
-    uuid = models.CharField(max_length=100)
-    stk_id = models.CharField(max_length=100)
-    created = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        verbose_name = 'Pushed STK'
-        verbose_name_plural = 'Pushed STKs'
-
-    def __str__(self):
-        return self.reference
 

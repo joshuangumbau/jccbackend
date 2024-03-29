@@ -26,76 +26,12 @@ from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.permissions import IsAuthenticated,AllowAny
 
 # from members.utilis import convert_phone
-from lipanampesa.models import MpesaPayment, PushedSTKs
+from lipanampesa.models import MpesaPayment
 from lipanampesa.serializers import MpesaSerializer
 
 
-class PushMpesaSTK(APIView):
-    permission_classes = [AllowAny,]
 
-    def post(self, request):
-        data = request.data
-        email = data.get("email", "dagizo@gmail.com")
-        stk_payload = {
-            'amount': data['amount'],
-            'currency': data['currency'],
-            'callback_url': data['callback_url'],
-            'channel': data['channel'],
-            'email': email
-        }
-        print(stk_payload)
-        url = "https://dev.chedah.io/api/login"
-        payload={'email': 'dagizo@gmail.com',
-            'password': 'password'}
-        files=[]
-        auth_headers = {
-        'Accept': 'application/json',
-        'Authorization': 'Bearer 1|52NdZL2gz6G1hS7lE6Ex9ZEM0GWpzJMjikNR7XNR',
-        'Cookie': 'XSRF-TOKEN=eyJpdiI6IkI1Q2dMU09iTVFXOEJYaEd5bTVnVGc9PSIsInZhbHVlIjoiMkd1eDZ0cFBXeHY2OVc1dVdQaWx3OG9MTk1sUVdKZjBGYzgxZlJ1MWRVY2tUWGxDaVlRdTdHRERLcmhQV3hSSXplSDVtQitTdEFkRTh1eDNpdDVWSnVRZ1hSamk5b3lnbkNyd0o0R2FNRGg1OGxyckYrLzZNMkdETTEvb2xDWisiLCJtYWMiOiJlZjM5MjljMWMxNjE5MzQwYTZjZGQ4NWUyMzljZjQ3ZWFmZjYwMWJlZTQxMmE3MWY0OTg3NDg1ZDZiOGZjZTk2IiwidGFnIjoiIn0%3D; lipa_session=eyJpdiI6InVoSlFyTVp6N0JFdjNwd29BWlc2S0E9PSIsInZhbHVlIjoiOWZRcXJrSFpZYm4weUE5MkRiU21jdmpVMUtZT252dks5L3ZBbXY2ZkxHSkg0UVJpNDRjWVJheE1ZejJ4a2dpY2JCT09PWGZLZE4xZHQzaGw0UkJCOWx3RG5IUGpQMVpuZ2R4dlp2T1VUQTFqME5XSi9WOU81VXBwSG55ZWIxWG8iLCJtYWMiOiJjN2Q1NGUwMmRkZmNmY2RlMDU0NTZhNWUxZWM3ZjM3MDk3MGU4NTU5ODFhMzk3OTJhYzM5NzA3ZmRmNDY1MjQ0IiwidGFnIjoiIn0%3D'
-        }
-        response = requests.request("POST", url, headers=auth_headers, data=payload, files=files)
-        try:
-            obj=json.loads(response.text)
-            print("xxxxxxxxxx",response.text)
-            access_token=obj['access_token']
-            token="Bearer"+" "+access_token 
-        except:
-             token="Bearer"+" "+"344|59UY3YpkO7L8fA2QRx8sstxdRDcqejrkPueUPCPP"
-    #    """ initiate push stk"""
-        try:
-            stk_url = "https://dev.chedah.io/api/charge"
-        
-            files=[]
-            stk_headers = {
-            'Accept': 'application/json',
-            'Authorization': token
-                    }
 
-            stk_response = requests.request("POST", stk_url, headers=stk_headers, data=stk_payload, files=files)
-            stk_data=json.loads(stk_response.text)
-            print(stk_data)
-            created=PushedSTKs.objects.create(
-                    amount=stk_data["amount"],
-                    channel=stk_data["channel"],
-                    reference=stk_data["reference"],
-                    mechant_app_id=stk_data["merchant_app_id"],
-                    uuid=stk_data["uuid"],
-                    stk_id=stk_data["id"]
-            )
-            res={
-                "response":json.loads(stk_response.text),
-                "status":True,
-                "message":"stk push was successfull"
-            }
-
-            return Response(res,status=200)
-        except:
-                res={
-                "status":False,
-                "message":"stk push was not successfull"
-                 }
-
-                return Response(res,status=400)
 
 class MpesaCallBack(APIView):
     permission_classes = [AllowAny,]
