@@ -5,7 +5,7 @@ import json
 
 africastalking.initialize(
     username='sandbox',
-    api_key='59f919f1ef98c021f6dda40216f92185961ff7465705fc49208c7d475d31550a'
+    api_key='e16f5a62576771c9a9a2e9ac5611ea00f82837759b1412ef1d804bfbce7d087d'
 )
 
 sms = africastalking.SMS
